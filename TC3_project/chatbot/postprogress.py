@@ -20,7 +20,7 @@ DOC_DIR = "../data/texts"
 QUES_DIR = "../data/questions"
 
 def get_sentences(file):
-    with open(file, 'r') as d:
+    with open(file, 'r', encoding='latin-1') as d:
         text = d.read()
         tmp = nltk.sent_tokenize(text)
         sentences = [clean_text(sent) for sent in tmp]
@@ -99,10 +99,10 @@ def create_tfidf(dir):
     return text_list, text_names
 
 
-def tf(tokens, token):
-    count = Counter(tokens)
-    tf = count[token] / sum(count.values())
-    return tf
+# def tf(tokens, token):
+#     count = Counter(tokens)
+#     tf = count[token] / sum(count.values())
+#     return tf
 
 
 def get_cosine_similarity(text1, text2, v):
@@ -112,16 +112,16 @@ def get_cosine_similarity(text1, text2, v):
     # return entropy(t1.toarray()[0,:],t2.toarray()[0,:])
 
 
-def get_euclidean_distances(text1, text2, v):
-    t1 = v.transform([text1])
-    t2 = v.transform([text2])
-    return euclidean_distances(t1, t2)
-
-
-def get_jaccard_similarity(query, document):
-    intersection = set(query).intersection(set(document))
-    union = set(query).union(set(document))
-    return len(intersection) / len(union)
+# def get_euclidean_distances(text1, text2, v):
+#     t1 = v.transform([text1])
+#     t2 = v.transform([text2])
+#     return euclidean_distances(t1, t2)
+#
+#
+# def get_jaccard_similarity(query, document):
+#     intersection = set(query).intersection(set(document))
+#     union = set(query).union(set(document))
+#     return len(intersection) / len(union)
 
 def get_question():
     question = input("Please input your question: ")
@@ -144,9 +144,58 @@ def get_question():
 #     return reply
 
 if __name__ == '__main__':
+    # train model in whole corpus
     text_list, text_names = create_tfidf(DOC_DIR)
 
-    # print("Comparing the frequency of terms in the text %s" % text_names[0] + " and their tfidf")
+    v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
+    tfidf = v.fit_transform(text_list)
+
+    texts = {file: get_text(file) for file in text_names}
+    sentences = get_sentences("../data/all.txt")
+
+    eval = {}
+
+    while 1:
+        ques = get_question()
+
+        # look for reply per scene, than per sentence with fixed scene
+        similarity_text = {text_file: get_cosine_similarity(ques, txt, v)[0][0] for text_file, txt in texts.items()}
+        sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
+
+        sentences = get_sentences(sorted_similarity_text[0][0])
+
+        similarity_sentences = {sent: get_cosine_similarity(ques, sent, v)[0][0] for sent in sentences}
+        sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+
+        print("possible answers of system A are: ")
+        print(sorted_similarity_sentences[0:5])
+        print("the reply of system A is: " + sorted_similarity_sentences[0][0])
+
+        # look for reply in the whole text
+        similarity_sentences = {sent: get_cosine_similarity(ques, sent, v)[0][0] for sent in sentences}
+        sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+
+        print("possible answers of system B are: ")
+        print(sorted_similarity_sentences[0:5])
+        print("the reply of system B is: " + sorted_similarity_sentences[0][0])
+
+        while 1:
+            eval_tmp = input("\nWhich system you think is better(Please choose between A and B)? ")
+            if eval_tmp in ['A', 'B']:
+                eval[ques] = eval_tmp
+                break
+
+        # print(eval)
+
+
+
+
+
+
+
+
+
+        # print("Comparing the frequency of terms in the text %s" % text_names[0] + " and their tfidf")
     # tokens_one_file = get_tokens(text_names[0])
     #
     # tfs = {token: tf(tokens_one_file, token) for token in tokens_one_file}
@@ -157,26 +206,10 @@ if __name__ == '__main__':
     #
     # print("\n")
     #
-    v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
-    tfidf = v.fit_transform(text_list)
 
-    texts = {file: get_text(file) for file in text_names}
-    while 1:
-        ques = get_question()
 
-        similarity_text = {}
-        for text_file, txt in texts.items():
-            similarity_text[text_file] = get_cosine_similarity(ques, txt, v)[0][0]
 
-        sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
-        sentences = get_sentences(sorted_similarity_text[0][0])
 
-        similarity_sentences = {}
-        for sent in sentences:
-            similarity_sentences[sent] = get_cosine_similarity(ques, sent, v)[0][0]
-
-        sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
-        print(sorted_similarity_sentences[0][0])
 
         # rank = map(itemgetter(1), sorted_similarity).index(max(similarity.values()))
 

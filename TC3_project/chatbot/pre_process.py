@@ -28,7 +28,7 @@ if __name__ == '__main__':
                     line = line[:-1].split(' ')
                     tmp.append((line[1], line[2]))
             time_list.append(tmp)
-    # print(time_list)
+    print(time_list)
 
     # -----Read the translation of all episode, like a list of DataFrame----- #
     # -----Write the translation in res_dir in order of scenes----- #
@@ -36,12 +36,12 @@ if __name__ == '__main__':
     for i in range(12):
         trans_file = dir + trans_dir + "TheBigBangTheory.Season01.Episode" + str(i + 1).zfill(2) + ".speakername.ctm"
         # print(trans_file)
-        BigBang_tmp = pd.read_csv(trans_file, sep=' ', usecols=[2, 3, 4, 5, 7], names=['temps_debut_mot', 'duree_mot', 'mot', 'mesure_confiance_alignement', 'nom_locuteur'], quoting=3, error_bad_lines=False, dtype={"temps_debut_mot": np.float64, 'duree_mot': np.float64})
-        # print(BigBang_tmp.head())
+        bigBang_tmp = pd.read_csv(trans_file, sep=' ', usecols=[2, 3, 4, 5, 7], names=['temps_debut_mot', 'duree_mot', 'mot', 'mesure_confiance_alignement', 'nom_locuteur'], quoting=3, error_bad_lines=False, dtype={"temps_debut_mot": np.float64, 'duree_mot': np.float64})
+        # print(bigBang_tmp.head())
         for j in range(len(time_list[i])):
-            scene_start = BigBang_tmp[BigBang_tmp['temps_debut_mot'] == float(time_list[i][j][0])].index.tolist()[0]
-            scene_stop = BigBang_tmp[(BigBang_tmp['temps_debut_mot'] + BigBang_tmp['duree_mot']) == float(time_list[i][j][1])].index.tolist()[-1]
-            text = ' '.join(np.array(BigBang_tmp['mot'][scene_start: scene_stop+1]))
+            scene_start = bigBang_tmp[bigBang_tmp['temps_debut_mot'] == float(time_list[i][j][0])].index.tolist()[0]
+            scene_stop = bigBang_tmp[(bigBang_tmp['temps_debut_mot'] + bigBang_tmp['duree_mot']) == float(time_list[i][j][1])].index.tolist()[-1]
+            text = ' '.join(np.array(bigBang_tmp['mot'][scene_start: scene_stop+1]))
 
             data_file = res_dir + "texts/" + "TheBigBangTheory.Season01.Episode" + str(i + 1).zfill(2) + ".Scene" + str(j + 1).zfill(2) + ".txt"
             with open(data_file, 'w', encoding='latin-1') as f:
@@ -49,4 +49,17 @@ if __name__ == '__main__':
 
             # print(scene_start, scene_stop)
             # print(text)
+
+    # -----Extract the corpus and save it in res_dir/all.txt----- #
+    text = []
+    for i in range(17):
+        trans_file = dir + trans_dir + "TheBigBangTheory.Season01.Episode" + str(i + 1).zfill(2) + ".speakername.ctm"
+        bigBang_tmp = pd.read_csv(trans_file, sep=' ', usecols=[4], names=['word'], quoting=3, error_bad_lines=False)
+        text.extend(np.array(bigBang_tmp['word']))
+
+    text = " ".join(text)
+    with open(res_dir + "all.txt", 'w', encoding='latin-1') as f:
+        f.write(text + '\n')
+
+    # print(text)
 
