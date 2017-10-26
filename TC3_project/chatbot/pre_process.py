@@ -43,7 +43,7 @@ if __name__ == '__main__':
             scene_stop = BigBang_tmp[(BigBang_tmp['temps_debut_mot'] + BigBang_tmp['duree_mot']) == float(time_list[i][j][1])].index.tolist()[-1]
             text = ' '.join(np.array(BigBang_tmp['mot'][scene_start: scene_stop+1]))
 
-            data_file = res_dir + "texts/" + "TheBigBangTheory.Season01.Episode" + str(i + 1).zfill(2) + ".Scene" + str(j + 1).zfill(2)
+            data_file = res_dir + "texts/" + "TheBigBangTheory.Season01.Episode" + str(i + 1).zfill(2) + ".Scene" + str(j + 1).zfill(2) + ".txt"
             with open(data_file, 'w', encoding='latin-1') as f:
                 f.writelines(text + '\n')
 
