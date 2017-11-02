@@ -1,6 +1,6 @@
 
 import nltk
-import string, pprint, os, sys, csv
+import string, pprint, os, sys, csv, logging
 
 import numpy as np
 
@@ -15,9 +15,12 @@ from nltk.stem import WordNetLemmatizer
 from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 
+from gensim import corpora, models, similarities
 
 DOC_DIR = "../data/texts"
 QUES_DIR = "../data/questions"
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 def get_sentences(file):
     with open(file, 'r', encoding='latin-1') as d:
@@ -27,7 +30,7 @@ def get_sentences(file):
     return sentences
 
 def get_tokens(file):
-    with open(file, 'r') as d:
+    with open(file, 'r', encoding='latin-1') as d:
         text = d.read()
         tokens = nltk.word_tokenize(clean_text(text))
     return tokens
@@ -123,10 +126,23 @@ def get_cosine_similarity(text1, text2, v):
 #     union = set(query).union(set(document))
 #     return len(intersection) / len(union)
 
-def get_question():
-    question = input("Please input your question: ")
-    return question
+def get_similarity_gensim(model, query):
+    index = similarities.MatrixSimilarity(model)
+    # similarities.Similarity(model)
+    # index = similarities.SparseMatrixSimilarity(model, num_features=12)
+    # print(list(index)[0])
+    # similarity with each text theme
+    return index[query]
 
+def get_query():
+    query = input("Please input your query: ")
+    return query
+
+def get_query_gensim():
+    query = input("Please input your query: ")
+    query = tokenize(clean_text(query))
+    query_bow = dictionary.doc2bow(query)
+    return query_bow
 
 # def expand_morpho(morphology, tokens):
 #     lemmas = get_lemma(tokens)
@@ -144,183 +160,103 @@ def get_question():
 #     return reply
 
 if __name__ == '__main__':
+    # -----A tfidf model using sklearn----- #
     # train model in whole corpus
     text_list, text_names = create_tfidf(DOC_DIR)
 
-    v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
-    tfidf = v.fit_transform(text_list)
+    # v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
+    # tfidf = v.fit_transform(text_list)
 
     texts = {file: get_text(file) for file in text_names}
     sentences = get_sentences("../data/all.txt")
 
     eval = {}
 
-    while 1:
-        ques = get_question()
-
-        # look for reply per scene, than per sentence with fixed scene
-        similarity_text = {text_file: get_cosine_similarity(ques, txt, v)[0][0] for text_file, txt in texts.items()}
-        sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
-
-        sentences = get_sentences(sorted_similarity_text[0][0])
-
-        similarity_sentences = {sent: get_cosine_similarity(ques, sent, v)[0][0] for sent in sentences}
-        sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
-
-        print("possible answers of system A are: ")
-        print(sorted_similarity_sentences[0:5])
-        print("the reply of system A is: " + sorted_similarity_sentences[0][0])
-
-        # look for reply in the whole text
-        similarity_sentences = {sent: get_cosine_similarity(ques, sent, v)[0][0] for sent in sentences}
-        sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
-
-        print("possible answers of system B are: ")
-        print(sorted_similarity_sentences[0:5])
-        print("the reply of system B is: " + sorted_similarity_sentences[0][0])
-
-        while 1:
-            eval_tmp = input("\nWhich system you think is better(Please choose between A and B)? ")
-            if eval_tmp in ['A', 'B']:
-                eval[ques] = eval_tmp
-                break
+    # while 1:
+    #     query = get_query()
+    #
+    #     # look for reply per scene, than per sentence with fixed scene
+    #     similarity_text = {text_file: get_cosine_similarity(query, txt, v)[0][0] for text_file, txt in texts.items()}
+    #     sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
+    #
+    #     sentences = get_sentences(sorted_similarity_text[0][0])
+    #
+    #     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
+    #     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+    #
+    #     print("possible answers of system A are: ")
+    #     print(sorted_similarity_sentences[0:5])
+    #     print("the reply of system A is: " + sorted_similarity_sentences[0][0])
+    #
+    #     # look for reply in the whole text
+    #     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
+    #     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+    #
+    #     print("possible answers of system B are: ")
+    #     print(sorted_similarity_sentences[0:5])
+    #     print("the reply of system B is: " + sorted_similarity_sentences[0][0])
+    #
+    #     while 1:
+    #         eval_tmp = input("\nWhich system you think is better(A, B, 0, 1 where O means neither, 1 means both)? ")
+    #         if eval_tmp in ['A', 'B', '0', '1']:
+    #             eval[query] = eval_tmp
+    #             break
 
         # print(eval)
 
 
+    # all_stems = sum(texts_stemmed, [])
+    # stems_once = set(stem for stem in set(all_stems) if all_stems.count(stem) == 1)
+    # texts = [[stem for stem in text if stem not in stems_once] for text in texts_stemmed]
 
 
 
 
+    # -----A tfidf model using gensim----- #
+
+    corpus = [get_tokens(file) for file in text_names]
+    # print(corpus)
+    dictionary = corpora.Dictionary(corpus)
+    # print(dictionary)
+    # print(dictionary.token2id)
+    # word frequence
+    doc_vectors = [dictionary.doc2bow(text) for text in corpus]
+    # print(doc_vectors[0])
+
+    tfidf = models.TfidfModel(doc_vectors)
+    tfidf_vectors = tfidf[doc_vectors]
+    # print(tfidf_vectors)
+    # print(tfidf_vectors[0])
+
+    # query = get_query_gensim()
+    # sims_tfidf = get_similarity_gensim(tfidf_vectors, query)
+    # print(len(sims_tfidf))
+
+
+    # -----A lsi model using gensim----- #
+    lsi = models.LsiModel(tfidf_vectors, id2word=dictionary, num_topics=2)
+    lsi_vectors = lsi[tfidf_vectors]
+    # for vec in lsi_vector:
+    #     print(vec)
+
+    # query_lsi = lsi[query]
+    # sims_lsi = get_similarity_gensim(lsi_vectors, query_lsi)
+    # print(list(enumerate(sims_lsi)))
+
+
+    # -----A lda model using gensim----- #
+    lda = models.LdaModel(doc_vectors, id2word=dictionary, num_topics=2)
+    lda_vectors = lda[tfidf_vectors]
+    print(lda.print_topics(2))
+
+    # query_lda = lda[query]
+    # sims_lda = get_similarity_gensim(lda_vectors, query_lda)
+
+    # Random Projections
+    model = models.RpModel(tfidf_vectors, num_topics=500)
+    # Hierarchical Dirichlet Process
+    model = models.HdpModel(doc_vectors, id2word=dictionary)
 
 
 
-        # print("Comparing the frequency of terms in the text %s" % text_names[0] + " and their tfidf")
-    # tokens_one_file = get_tokens(text_names[0])
-    #
-    # tfs = {token: tf(tokens_one_file, token) for token in tokens_one_file}
-    # sorted_tfs = sorted(tfs.items(), key=lambda x: x[1], reverse=True)
-    # for token, tf in sorted_tfs[:10]:
-    #     print("\tWord: {}, TF: {}".format(token, round(tf, 5)))
-    # # print sorted_tfs
-    #
-    # print("\n")
-    #
-
-
-
-
-
-        # rank = map(itemgetter(1), sorted_similarity).index(max(similarity.values()))
-
-        # tfidf = {token: v.transform([tmp_ques])[0, int(v.vocabulary_[token])] if token in v.vocabulary_ else 0 for token in tokenize(tmp_ques)}
-        # sorted_tfidf = sorted(tfidf.items(), key=lambda x: x[1], reverse=True)
-
-        # print("max similarity in file %s " % ques_file + " is %f " % max(similarity.values()) + "at rank %d " % (rank + 1))
-        # print("the responsible descriptor is %s" % map(itemgetter(0), sorted_tfidf[:5]))
-
-
-    #
-    # tfidfs = {token: tfidf[text_names.index(text_names[0]), int(v.vocabulary_[token])] if token in v.vocabulary_ else 0
-    #           for token in tokens_one_file}
-    # sorted_tfidfs = sorted(tfidfs.items(), key=lambda x: x[1], reverse=True)
-    # for token, tfidf in sorted_tfidfs[:10]:
-    #     print("\tWord: {}, TF-IDF: {}".format(token, round(tfidf, 5)))
-    # # print sorted_tfidfs
-
-
-
-    # morphology = []
-    # with open('data/der-families-en.utf8') as csvfile:
-    #     f = csv.reader(csvfile, delimiter='\\')
-    #     for row in f:
-    #         morphology.append(row[0:-1:2])
-    #
-    # synonym = []
-    # with open('data/sem-families-wn.utf8') as csvfile:
-    #     f = csv.reader(csvfile, delimiter='\\')
-    #     for row in f:
-    #         synonym.append(row[0:-1:2])
-    #
-    # question_list, question_names = create_tfidf(QUES_DIR)
-    #
-    # # compute MRR and similarity for document 10
-    # i = 10
-    # questions = {file: get_text(file).strip() for file in question_names if 'rd_' + str(i) + '_' in file}
-    # texts = {file: get_text(file) for file in text_names if 'rd_' + str(i) + '_' in file}
-    #
-    # for ques_file, ques in questions.items():
-    #     # # remove stop word from request
-    #     tmp_ques = remove_stop_word(tokenize(ques))
-    #     # # remove unimportant tag from request
-    #     tmp_ques = remove_stop_tag(get_pos_tag(tokenize(tmp_ques)))
-    #     # # using stem for request
-    #     # tmp_ques = " ".join(get_stem(tokenize(ques)))
-    #
-    #     # # using morphology for request
-    #     # lemma_morpho = expand_morpho(morphology, tokenize(ques))
-    #     # tmp = [" ".join(morpho) for morpho in lemma_morpho.values()]
-    #     # expand = " ".join(tmp)
-    #     # expand = clean_text(expand)
-    #     # tmp_ques = ques + " " + expand
-    #
-    #     # # using synonym for request
-    #     # lemma_syno = expand_syno(synonym, tokenize(ques))
-    #     # tmp = [" ".join(syno) for syno in lemma_syno.values()]
-    #     # expand = " ".join(tmp)
-    #     # expand = clean_text(expand)
-    #     # tmp_ques = ques + " " + expand
-    #
-    #     # using request itself
-    #     # tmp_ques = ques
-    #     # print tmp_ques
-    #
-    #     similarity = {}
-    #     for text_file, txt in texts.items():
-    #         # apply stem to document
-    #         # tmp_txt = " ".join(get_stem(tokenize(txt)))
-    #         # print tmp_txt
-    #
-    #         # different similrity mesure
-    #         similarity[(ques_file, text_file)] = get_cosine_similarity(tmp_ques, txt, v)[0][0]
-    #         # similarity[(ques_file, text_file)] = get_jaccard_similarity(tmp_ques, txt)
-    #         # similarity[(ques_file, text_file)] = get_euclidean_distances(tmp_ques, txt, v)
-    #
-    #     sorted_similarity = sorted(similarity.items(), key=lambda x: x[1], reverse=True)
-    #     rank = map(itemgetter(1), sorted_similarity).index(max(similarity.values()))
-    #
-    #     tfidf = {token: v.transform([tmp_ques])[0, int(v.vocabulary_[token])] if token in v.vocabulary_ else 0 for token
-    #              in tokenize(tmp_ques)}
-    #     sorted_tfidf = sorted(tfidf.items(), key=lambda x: x[1], reverse=True)
-    #
-    #     print
-    #     "max similarity in file %s " % ques_file + " is %f " % max(similarity.values()) + "at rank %d " % (rank + 1)
-    #     print
-    #     "the responsible descriptor is %s" % map(itemgetter(0), sorted_tfidf[:5])
-    #
-    #     # # relevance feedback
-    #
-    #     # max_document = sorted_similarity[rank][0][1]
-    #     # tfidf_document = {token: v.transform([texts.get(max_document)])[0, int(v.vocabulary_[token])] if token in v.vocabulary_ else 0 for token in tokenize(texts.get(max_document))}
-    #     # sorted_tfidf_document = sorted(tfidf_document.items(), key = lambda x: x[1], reverse = True)
-    #
-    #     # expand = " ".join(OrderedDict(sorted_tfidf_document).keys()[0:5])
-    #     # tmp_ques = ques + " " + expand
-    #
-    #     # similarity = {}
-    #     # for text_file, txt in texts.items():
-    #     #     similarity[(ques_file, text_file)] = get_cosine_similarity(tmp_ques, txt, v)[0][0]
-    #
-    #     # sorted_similarity = sorted(similarity.items(), key = lambda x: x[1], reverse = True)
-    #     # rank = map(itemgetter(1), sorted_similarity).index(max(similarity.values()))
-    #
-    #     # tfidf = {token: v.transform([tmp_ques])[0, int(v.vocabulary_[token])] if token in v.vocabulary_ else 0 for token in tokenize(tmp_ques)}
-    #     # sorted_tfidf = sorted(tfidf.items(), key = lambda x: x[1], reverse = True)
-    #
-    #     # print "relevance feedback : max similarity in file %s " %ques_file + " is %f " %max(similarity.values()) + "at rank %d " %(rank+1)
-    #     # print "relevance feedback : the responsible descriptor is %s" %map(itemgetter(0), sorted_tfidf[:5])
-    #
-    #     f = open(os.path.join('MRR', os.path.basename(ques_file)), 'w')
-    #     f.writelines(
-    #         file[0] + '\t' + os.path.basename(file[1]) + '\t' + str(simi) + '\n' for file, simi in sorted_similarity)
 
