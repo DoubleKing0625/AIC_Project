@@ -1,8 +1,7 @@
-
 import nltk
-import string, pprint, os, sys, csv, logging
+import string, pprint, os, sys, csv, logging, multiprocessing
 
-import numpy as np
+import numpy
 
 from operator import itemgetter
 from collections import Counter, OrderedDict
@@ -22,12 +21,14 @@ QUES_DIR = "../data/questions"
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+
 def get_sentences(file):
     with open(file, 'r', encoding='latin-1') as d:
         text = d.read()
         tmp = nltk.sent_tokenize(text)
         sentences = [clean_text(sent) for sent in tmp]
     return sentences
+
 
 def get_tokens(file):
     with open(file, 'r', encoding='latin-1') as d:
@@ -126,23 +127,33 @@ def get_cosine_similarity(text1, text2, v):
 #     union = set(query).union(set(document))
 #     return len(intersection) / len(union)
 
-def get_similarity_gensim(model, query):
-    index = similarities.MatrixSimilarity(model)
-    # similarities.Similarity(model)
-    # index = similarities.SparseMatrixSimilarity(model, num_features=12)
-    # print(list(index)[0])
-    # similarity with each text theme
-    return index[query]
+def get_similarity_gensim(model, query, d2v=False):
+    if d2v:
+        return doc2vec.docvecs.most_similar([doc2vec.infer_vector(query)], topn=len(doc2vec.docvecs))
+    else:
+        index = similarities.MatrixSimilarity(model)
+        # similarities.Similarity(model)
+        # index = similarities.SparseMatrixSimilarity(model, num_features=12)
+        # print(list(index)[0])
+        # similarity with each text theme
+        return index[query]
+
 
 def get_query():
     query = input("Please input your query: ")
+    query = clean_text(query)
     return query
 
-def get_query_gensim():
+
+def get_query_gensim(d2v=False):
     query = input("Please input your query: ")
     query = tokenize(clean_text(query))
     query_bow = dictionary.doc2bow(query)
-    return query_bow
+    if d2v:
+        return query
+    else:
+        return query_bow
+
 
 # def expand_morpho(morphology, tokens):
 #     lemmas = get_lemma(tokens)
@@ -164,14 +175,14 @@ if __name__ == '__main__':
     # train model in whole corpus
     text_list, text_names = create_tfidf(DOC_DIR)
 
+    # texts = {file: get_text(file) for file in text_names}
+    # sentences = get_sentences("../data/all.txt")
+    #
+    # eval = {}
+    #
     # v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
     # tfidf = v.fit_transform(text_list)
-
-    texts = {file: get_text(file) for file in text_names}
-    sentences = get_sentences("../data/all.txt")
-
-    eval = {}
-
+    #
     # while 1:
     #     query = get_query()
     #
@@ -202,9 +213,9 @@ if __name__ == '__main__':
     #             eval[query] = eval_tmp
     #             break
 
-        # print(eval)
+    # print(eval)
 
-
+    ## remove words appear only once
     # all_stems = sum(texts_stemmed, [])
     # stems_once = set(stem for stem in set(all_stems) if all_stems.count(stem) == 1)
     # texts = [[stem for stem in text if stem not in stems_once] for text in texts_stemmed]
@@ -214,49 +225,92 @@ if __name__ == '__main__':
 
     # -----A tfidf model using gensim----- #
 
-    corpus = [get_tokens(file) for file in text_names]
+    corpus = [tokenize(line) for line in text_list]
     # print(corpus)
     dictionary = corpora.Dictionary(corpus)
     # print(dictionary)
     # print(dictionary.token2id)
-    # word frequence
+    # word frequence tf
     doc_vectors = [dictionary.doc2bow(text) for text in corpus]
     # print(doc_vectors[0])
 
-    tfidf = models.TfidfModel(doc_vectors)
-    tfidf_vectors = tfidf[doc_vectors]
-    # print(tfidf_vectors)
-    # print(tfidf_vectors[0])
-
+    # tfidf = models.TfidfModel(doc_vectors)
+    # tfidf_vectors = tfidf[doc_vectors]
+    # # print(tfidf_vectors)
+    # # print(tfidf_vectors[0])
+    # #
     # query = get_query_gensim()
-    # sims_tfidf = get_similarity_gensim(tfidf_vectors, query)
-    # print(len(sims_tfidf))
-
-
-    # -----A lsi model using gensim----- #
-    lsi = models.LsiModel(tfidf_vectors, id2word=dictionary, num_topics=2)
-    lsi_vectors = lsi[tfidf_vectors]
-    # for vec in lsi_vector:
+    # # sims_tfidf = get_s、imilarity_gensim(tfidf_vectors, query)
+    # # print(len(sims_tfidf))
+    # # print(sims_tfidf)
+    #
+    #
+    # # # -----A lsi model using gensim----- #
+    # lsi = models.LsiModel(tfidf_vectors, id2word=dictionary, num_topics=20)
+    # # topic weighted 115*20
+    # lsi_vectors = lsi[tfidf_vectors]
+    # print(len(lsi_vectors), lsi_vectors[0:2])
+    # for vec in lsi_vectors:
     #     print(vec)
-
+    #
     # query_lsi = lsi[query]
+    # # similarity with each scene 1*115
     # sims_lsi = get_similarity_gensim(lsi_vectors, query_lsi)
     # print(list(enumerate(sims_lsi)))
-
-
-    # -----A lda model using gensim----- #
-    lda = models.LdaModel(doc_vectors, id2word=dictionary, num_topics=2)
-    lda_vectors = lda[tfidf_vectors]
-    print(lda.print_topics(2))
-
+    #
+    #
+    # # -----A lda model using gensim----- #
+    # lda = models.LdaModel(doc_vectors, id2word=dictionary, num_topics=20)
+    # lda_vectors = lda[tfidf_vectors]
+    # # for vec in lda_vectors:
+    # #     print(vec)
+    # # topic info
+    # print(lda.print_topics(20))
+    #
     # query_lda = lda[query]
     # sims_lda = get_similarity_gensim(lda_vectors, query_lda)
+    # print(list(enumerate(sims_lda)))
 
-    # Random Projections
-    model = models.RpModel(tfidf_vectors, num_topics=500)
-    # Hierarchical Dirichlet Process
-    model = models.HdpModel(doc_vectors, id2word=dictionary)
+    # # Random Projections
+    # model = models.RpModel(tfidf_vectors, num_topics=500)
+    # # Hierarchical Dirichlet Process
+    # model = models.HdpModel(doc_vectors, id2word=dictionary)
 
 
+    # -----A doc2vec model using gensim----- #
+    train_corpus = [models.doc2vec.TaggedDocument(doc, [i]) for i, doc in enumerate(corpus)]
 
+    # doc2vec = models.Doc2Vec(size=100, min_count=2, workers=multiprocessing.cpu_count())
+    # Build a Vocabulary
+    # doc2vec.build_vocab(train_corpus)
+    # doc2vec.save('doc2vec')
+    # print(doc2vec)
+    # print(len(doc2vec.wv.vocab))
+    # print(doc2vec.wv.vocab['so'].count)
+    # size: parameter size * 1
+    # a = doc2vec.infer_vector(['only', 'you', 'can', 'prevent', 'forrest', 'fires'])
+    # print(len(doc2vec.docvecs))
 
+    # ranks = []
+    # # second_ranks = []
+    # for doc_id in range(len(train_corpus)):
+    #     inferred_vector = doc2vec.infer_vector(train_corpus[doc_id].words)
+    #     sims = doc2vec.docvecs.most_similar([inferred_vector], topn=len(doc2vec.docvecs))
+    #     rank = [docid for docid, sim in sims].index(doc_id)
+    #     ranks.append(rank)
+    #
+    #     # second_ranks.append(sims[1])
+    #
+    # print(Counter(ranks))
+
+    # Pick a random document from the test corpus and infer a vector from the doc2vec
+    # doc_id = random.randint(0, len(test_corpus))
+    # inferred_vector = doc2vec.infer_vector(test_corpus[doc_id])
+    # sims = doc2vec.docvecs.most_similar([inferred_vector], topn=len(doc2vec.docvecs))
+
+    # query = get_query_gensim(d2v=True)
+    doc2vec = models.Doc2Vec.load('doc2vec')
+    query = ['soft', 'tizzy']
+    a=get_similarity_gensim(doc2vec, query, d2v=True)
+    # a=doc2vec.docvecs.most_similar([doc2vec.infer_vector(query)], topn=len(doc2vec.docvecs))
+    print(a)
