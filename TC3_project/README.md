@@ -1,5 +1,5 @@
 # The project for TC3
-<b>Sujet: Chatbot based on the similarity of document.</b>
+<b>Subject: Chatbot based on the similarity of document.</b>
 
 The source codes are in <b>chatbot</b> directory.
 
