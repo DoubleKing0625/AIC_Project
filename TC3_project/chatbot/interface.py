@@ -28,7 +28,6 @@ if __name__ == '__main__':
             for i in range(5):
                 sentences_lsi = sentences_lsi + pp.get_sentences_clean(pp.text_names[sims_lsi[i][0]])
                 sentences_lsi_original = sentences_lsi_original + pp.get_sentences_original(pp.text_names[sims_lsi[i][0]])
-            #sentences_lsi_original = pp.get_original_sentences(pp.text_names[sims_lsi[0][0]])
 
             corpus_lsi = [pp.remove_stop_word(pp.tokenize(line), gensim=True) for line in sentences_lsi]
             dictionary_lsi = pp.corpora.Dictionary(corpus_lsi)

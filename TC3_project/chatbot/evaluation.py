@@ -4,7 +4,6 @@ import itertools
 
 def compute_baseline():
     numGood = 0
-
     for answer in eva:
         if answer.find('a') == 0:
             numGood = numGood + 1
@@ -60,7 +59,6 @@ if __name__ == '__main__':
         # look for the most related sentence using bm25
         scores = pp.bm25Model.get_scores(query, pp.average_idf)
         max_score_idx = scores.index(max(scores))
-        #print("the reply of system B (bm25) is: " + pp.sentences[max_score_idx])
         reply_B = pp.sentences_original[max_score_idx]
 
         # system C
@@ -85,7 +83,6 @@ if __name__ == '__main__':
 
         sims_lsi_scene = pp.get_similarity_gensim(tfidf_vectors_lsi, len(dictionary_lsi), query_bow_lsi)
         print(sims_lsi_scene[0:5])
-        #print("the reply of system C (lsi) is: " + sentences_lsi[sims_lsi_scene[0][0]])
         reply_C = sentences_lsi_original[sims_lsi_scene[0][0]]
 
         # system D
@@ -111,15 +108,12 @@ if __name__ == '__main__':
 
         sims_lda_scene = pp.get_similarity_gensim(tfidf_vectors_lda, len(dictionary_lda), query_bow_lda)
         print(sims_lda_scene[0:5])
-        #print("the reply of system D (lda) is: " + sentences_lda[sims_lda_scene[0][0]])
         reply_D = sentences_lda_original[sims_lda_scene[0][0]]
 
         # system E
         # look for the most related sentence using doc2vec
         sims_doc2vec = pp.get_similarity_gensim(pp.doc2vec, None, query, d2v=True)
         print(sims_doc2vec[0:5])
-        # print("the reply of system E (doc2vec) is: " + pp.sentences[sims_doc2vec[0][0]])
-        # print('Document ({}): «{}»\n'.format(sims_doc2vec[0][0], ' '.join(corpus_doc2vec[sims_doc2vec[0][0]].words)))
         reply_E = pp.sentences_original[sims_doc2vec[0][0]]
 
         print("The query is: " + q)
