@@ -23,18 +23,21 @@ QUES_DIR = "../data/questions"
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
-def get_sentences(file):
+def get_sentences_original(file):
+    with open(file, 'r', encoding='latin-1') as d:
+        text = d.read()
+        tmp = nltk.sent_tokenize(text)
+        #sentences = [clean_text(sent) for sent in tmp]
+    return tmp
+
+def get_sentences_clean(file):
     with open(file, 'r', encoding='latin-1') as d:
         text = d.read()
         tmp = nltk.sent_tokenize(text)
         sentences = [clean_text(sent) for sent in tmp]
     return sentences
 
-def get_original_sentences(file):
-    with open(file, 'r', encoding='latin-1') as d:
-        text = d.read()
-        original_sentences = text.split(".")
-    return original_sentences
+
 
 def get_tokens(file):
     with open(file, 'r', encoding='latin-1') as d:
@@ -188,7 +191,8 @@ def get_query_gensim(query):
 
 # -----A tfidf model using sklearn----- #
 text_list, text_names = create_tfidf(DOC_DIR)
-sentences = get_original_sentences("../data/all.txt")
+sentences = get_sentences_clean("../data/all.txt")
+sentences_original = get_sentences_original("../data/all.txt")
 
 texts = {file: get_text(file) for file in text_names}
 
@@ -264,7 +268,7 @@ doc_vectors_scene = [dictionary_scene.doc2bow(text) for text in corpus_scene]
 tfidf_scene = models.TfidfModel(doc_vectors_scene)
 tfidf_vectors_scene = tfidf_scene[doc_vectors_scene]
 
-lsi = models.LsiModel(tfidf_vectors_scene, id2word=dictionary_scene, num_topics=12)
+lsi = models.LsiModel(tfidf_vectors_scene, id2word=dictionary_scene, num_topics=30)
 # topic weighted num_document*num_topics
 lsi_vectors = lsi[tfidf_vectors_scene]
 # print(len(lsi_vectors), lsi_vectors[0:2])
@@ -272,7 +276,7 @@ lsi_vectors = lsi[tfidf_vectors_scene]
 #     print(vec)
 
 # -----A lda model using gensim----- #
-lda = models.LdaModel(doc_vectors_scene, id2word=dictionary_scene, num_topics=12, iterations=300)
+lda = models.LdaModel(doc_vectors_scene, id2word=dictionary_scene, num_topics=30, iterations=3000)
 lda_vectors = lda[doc_vectors_scene]
 # for vec in lda_vectors[0:2]:
 #     print(vec)
