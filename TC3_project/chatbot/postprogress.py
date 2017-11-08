@@ -30,6 +30,11 @@ def get_sentences(file):
         sentences = [clean_text(sent) for sent in tmp]
     return sentences
 
+def get_original_sentences(file):
+    with open(file, 'r', encoding='latin-1') as d:
+        text = d.read()
+        original_sentences = text.split(".")
+    return original_sentences
 
 def get_tokens(file):
     with open(file, 'r', encoding='latin-1') as d:
@@ -154,8 +159,8 @@ def get_query():
     return query
 
 
-def get_query_gensim():
-    query = input("Please input your query: ")
+def get_query_gensim(query):
+    # query = input("Please input your query: ")
     # remove stop word from request
     query = remove_stop_word(tokenize(clean_text(query)), gensim=True)
     # print(query)
@@ -180,209 +185,137 @@ def get_query_gensim():
 #     reply = ""
 #     return reply
 
-if __name__ == '__main__':
-    # -----A tfidf model using sklearn----- #
-    text_list, text_names = create_tfidf(DOC_DIR)
-    sentences = get_sentences("../data/all.txt")
 
-    texts = {file: get_text(file) for file in text_names}
+# -----A tfidf model using sklearn----- #
+text_list, text_names = create_tfidf(DOC_DIR)
+sentences = get_original_sentences("../data/all.txt")
 
-    # eval_sk = {}
-    #
-    # v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
-    # tfidf = v.fit_transform(text_list)
-    #
-    # while 1:
-    #     query = get_query()
-    #
-    #     # look for reply per scene, than per sentence with fixed scene
-    #     similarity_text = {text_file: get_cosine_similarity(query, txt, v)[0][0] for text_file, txt in texts.items()}
-    #     sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
-    #
-    #     sentences = get_sentences(sorted_similarity_text[0][0])
-    #
-    #     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
-    #     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
-    #
-    #     print("possible answers of system A are: ")
-    #     print(sorted_similarity_sentences[0:5])
-    #     print("the reply of system A is: " + sorted_similarity_sentences[0][0])
-    #
-    #     # look for reply in the whole text
-    #     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
-    #     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
-    #
-    #     print("possible answers of system B are: ")
-    #     print(sorted_similarity_sentences[0:5])
-    #     print("the reply of system B is: " + sorted_similarity_sentences[0][0])
-    #
-    #     while 1:
-    #         eval_tmp = input("\nWhich system you think is better(A, B, 0, 1 where O means neither, 1 means both)? ")
-    #         if eval_tmp in ['A', 'B', '0', '1']:
-    #             eval_sk[query] = eval_tmp
-    #             break
+texts = {file: get_text(file) for file in text_names}
 
-    # print(eval)
+# eval_sk = {}
+#
+# v = TfidfVectorizer(encoding='latin-1', tokenizer=tokenize, stop_words='english')
+# tfidf = v.fit_transform(text_list)
+#
+# while 1:
+#     query = get_query()
+#
+#     # look for reply per scene, than per sentence with fixed scene
+#     similarity_text = {text_file: get_cosine_similarity(query, txt, v)[0][0] for text_file, txt in texts.items()}
+#     sorted_similarity_text = sorted(similarity_text.items(), key=lambda x: x[1], reverse=True)
+#
+#     sentences = get_sentences(sorted_similarity_text[0][0])
+#
+#     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
+#     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+#
+#     print("possible answers of system A are: ")
+#     print(sorted_similarity_sentences[0:5])
+#     print("the reply of system A is: " + sorted_similarity_sentences[0][0])
+#
+#     # look for reply in the whole text
+#     similarity_sentences = {sent: get_cosine_similarity(query, sent, v)[0][0] for sent in sentences}
+#     sorted_similarity_sentences = sorted(similarity_sentences.items(), key=lambda x: x[1], reverse=True)
+#
+#     print("possible answers of system B are: ")
+#     print(sorted_similarity_sentences[0:5])
+#     print("the reply of system B is: " + sorted_similarity_sentences[0][0])
+#
+#     while 1:
+#         eval_tmp = input("\nWhich system you think is better(A, B, 0, 1 where O means neither, 1 means both)? ")
+#         if eval_tmp in ['A', 'B', '0', '1']:
+#             eval_sk[query] = eval_tmp
+#             break
 
-    ## remove words appear only once
-    # all_stems = sum(texts_stemmed, [])
-    # stems_once = set(stem for stem in set(all_stems) if all_stems.count(stem) == 1)
-    # texts = [[stem for stem in text if stem not in stems_once] for text in texts_stemmed]
+# print(eval)
+
+## remove words appear only once
+# all_stems = sum(texts_stemmed, [])
+# stems_once = set(stem for stem in set(all_stems) if all_stems.count(stem) == 1)
+# texts = [[stem for stem in text if stem not in stems_once] for text in texts_stemmed]
 
 
 
-    # -----A tfidf model using gensim----- #
-    corpus = [remove_stop_word(tokenize(line), gensim=True) for line in sentences]
-    dictionary = corpora.Dictionary(corpus)
-    # word frequence tf
-    doc_vectors = [dictionary.doc2bow(text) for text in corpus]
+# -----A tfidf model using gensim----- #
+corpus = [remove_stop_word(tokenize(line), gensim=True) for line in sentences]
+dictionary = corpora.Dictionary(corpus)
+# word frequence tf
+doc_vectors = [dictionary.doc2bow(text) for text in corpus]
 
-    # print(corpus)
-    # print(dictionary)
-    # print(dictionary.token2id)
-    # print(doc_vectors[0])
+# print(corpus)
+# print(dictionary)
+# print(dictionary.token2id)
+# print(doc_vectors[0])
 
-    tfidf = models.TfidfModel(doc_vectors)
-    tfidf_vectors = tfidf[doc_vectors]
-    # print(tfidf_vectors)
-    # print(tfidf_vectors[0])
+tfidf = models.TfidfModel(doc_vectors)
+tfidf_vectors = tfidf[doc_vectors]
+# print(tfidf_vectors)
+# print(tfidf_vectors[0])
 
-    # -----A bm25 model using gensim----- #
-    bm25Model = bm25.BM25(corpus)
-    average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
+# -----A bm25 model using gensim----- #
+bm25Model = bm25.BM25(corpus)
+average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
 
-    # -----A lsi model using gensim----- #
-    corpus_scene = [remove_stop_word(tokenize(line), gensim=True) for line in text_list]
-    dictionary_scene = corpora.Dictionary(corpus_scene)
-    doc_vectors_scene = [dictionary_scene.doc2bow(text) for text in corpus_scene]
+# -----A lsi model using gensim----- #
+corpus_scene = [remove_stop_word(tokenize(line), gensim=True) for line in text_list]
+dictionary_scene = corpora.Dictionary(corpus_scene)
+doc_vectors_scene = [dictionary_scene.doc2bow(text) for text in corpus_scene]
 
-    tfidf_scene = models.TfidfModel(doc_vectors_scene)
-    tfidf_vectors_scene = tfidf_scene[doc_vectors_scene]
+tfidf_scene = models.TfidfModel(doc_vectors_scene)
+tfidf_vectors_scene = tfidf_scene[doc_vectors_scene]
 
-    lsi = models.LsiModel(tfidf_vectors_scene, id2word=dictionary_scene, num_topics=12)
-    # topic weighted num_document*num_topics
-    lsi_vectors = lsi[tfidf_vectors_scene]
-    # print(len(lsi_vectors), lsi_vectors[0:2])
-    # for vec in lsi_vectors[0:2]:
-    #     print(vec)
+lsi = models.LsiModel(tfidf_vectors_scene, id2word=dictionary_scene, num_topics=12)
+# topic weighted num_document*num_topics
+lsi_vectors = lsi[tfidf_vectors_scene]
+# print(len(lsi_vectors), lsi_vectors[0:2])
+# for vec in lsi_vectors[0:2]:
+#     print(vec)
 
-    # -----A lda model using gensim----- #
-    lda = models.LdaModel(doc_vectors_scene, id2word=dictionary_scene, num_topics=12, iterations=300)
-    lda_vectors = lda[doc_vectors_scene]
-    # for vec in lda_vectors[0:2]:
-    #     print(vec)
-    # # topic info
-    # print(lda.print_topics(12))
+# -----A lda model using gensim----- #
+lda = models.LdaModel(doc_vectors_scene, id2word=dictionary_scene, num_topics=12, iterations=300)
+lda_vectors = lda[doc_vectors_scene]
+# for vec in lda_vectors[0:2]:
+#     print(vec)
+# # topic info
+# print(lda.print_topics(12))
 
-    # -----A doc2vec model using gensim----- #
-    # corpus_doc2vec = [models.doc2vec.TaggedDocument(doc, [i]) for i, doc in enumerate(corpus)]
-    corpus_doc2vec = [models.doc2vec.TaggedDocument(remove_stop_word(tokenize(line), gensim=True), [i]) for i, line in enumerate(sentences)]
+# -----A doc2vec model using gensim----- #
+# corpus_doc2vec = [models.doc2vec.TaggedDocument(doc, [i]) for i, doc in enumerate(corpus)]
+corpus_doc2vec = [models.doc2vec.TaggedDocument(remove_stop_word(tokenize(line), gensim=True), [i]) for i, line in enumerate(sentences)]
 
-    doc2vec = models.Doc2Vec(size=24, min_count=2, workers=multiprocessing.cpu_count())
-    # Build a Vocabulary
-    doc2vec.build_vocab(corpus_doc2vec)
-    # doc2vec.save('doc2vec')
-    # doc2vec = models.Doc2Vec.load('doc2vec')
+doc2vec = models.Doc2Vec(size=24, min_count=2, workers=multiprocessing.cpu_count())
+# Build a Vocabulary
+doc2vec.build_vocab(corpus_doc2vec)
+# doc2vec.save('doc2vec')
+# doc2vec = models.Doc2Vec.load('doc2vec')
 
-    # print(doc2vec)
-    # print(len(doc2vec.wv.vocab))
-    # print(doc2vec.wv.vocab['so'].count)
-    # size: parameter size * 1
-    # a = doc2vec.infer_vector(['only', 'you', 'can', 'prevent', 'forrest', 'fires'])
-    # print(len(doc2vec.docvecs))
+# print(doc2vec)
+# print(len(doc2vec.wv.vocab))
+# print(doc2vec.wv.vocab['so'].count)
+# size: parameter size * 1
+# a = doc2vec.infer_vector(['only', 'you', 'can', 'prevent', 'forrest', 'fires'])
+# print(len(doc2vec.docvecs))
 
-    # # self-similarity
-    # ranks = []
-    # # second_ranks = []
-    # for doc_id in range(len(corpus_doc2vec)):
-    #     inferred_vector = doc2vec.infer_vector(corpus_doc2vec[doc_id].words)
-    #     sims = get_similarity_gensim(doc2vec, None, corpus_doc2vec[doc_id].words, d2v=True)
-    #     rank = [docid for docid, sim in sims].index(doc_id)
-    #     ranks.append(rank)
-    #
-    #     # second_ranks.append(sims[1])
-    #
-    # print(Counter(ranks))
+# # self-similarity
+# ranks = []
+# # second_ranks = []
+# for doc_id in range(len(corpus_doc2vec)):
+#     inferred_vector = doc2vec.infer_vector(corpus_doc2vec[doc_id].words)
+#     sims = get_similarity_gensim(doc2vec, None, corpus_doc2vec[doc_id].words, d2v=True)
+#     rank = [docid for docid, sim in sims].index(doc_id)
+#     ranks.append(rank)
+#
+#     # second_ranks.append(sims[1])
+#
+# print(Counter(ranks))
 
-    eval_gen = {}
 
-    eval_possible = []
-    [eval_possible.extend([''.join(i) for i in itertools.permutations('abcde', j)]) for j in range(1, 6)]
-
-    while 1:
-        query = get_query_gensim()
-
-        # look for the most related sentence using tfidf
-        query_bow = dictionary.doc2bow(query)
-
-        # sorted similarity with each sentence 1*num_sent
-        sims_tfidf = get_similarity_gensim(tfidf_vectors, len(dictionary), query_bow)
-        print(sims_tfidf[0:5])
-        print("the reply of system A (tfidf) is: " + sentences[sims_tfidf[0][0]])
-
-        # look for the most related sentence using bm25
-        scores = bm25Model.get_scores(query, average_idf)
-        max_score_idx = scores.index(max(scores))
-        print("the reply of system B (bm25) is: " + sentences[max_score_idx])
-
-        # look for the most related text using lsi
-        query_lsi = lsi[query_bow]
-        # sorted similarity with each scene 1*115
-        sims_lsi = get_similarity_gensim(lsi_vectors, 12, query_lsi)
-
-        # look for the most related sentence using tfidf
-        sentences_lsi = get_sentences(text_names[sims_lsi[0][0]])
-
-        corpus_lsi = [remove_stop_word(tokenize(line), gensim=True) for line in sentences_lsi]
-        dictionary_lsi = corpora.Dictionary(corpus_lsi)
-        doc_vectors_lsi = [dictionary_lsi.doc2bow(text) for text in corpus_lsi]
-
-        tfidf_vectors_lsi = tfidf[doc_vectors_lsi]
-
-        query_bow_lsi = dictionary_lsi.doc2bow(query)
-
-        sims_lsi_scene = get_similarity_gensim(tfidf_vectors_lsi, len(dictionary_lsi), query_bow_lsi)
-        print(sims_lsi_scene[0:5])
-        print("the reply of system C (lsi) is: " + sentences_lsi[sims_lsi_scene[0][0]])
-
-        # look for the most related text using lda
-        query_lda = lda[query_bow]
-        sims_lda = get_similarity_gensim(lda_vectors, 12, query_lda)
-
-        # look for the most related sentence using tfidf
-        sentences_lda = get_sentences(text_names[sims_lda[0][0]])
-
-        corpus_lda = [remove_stop_word(tokenize(line), gensim=True) for line in sentences_lda]
-        dictionary_lda = corpora.Dictionary(corpus_lda)
-        doc_vectors_lda = [dictionary_lda.doc2bow(text) for text in corpus_lda]
-
-        tfidf_vectors_lda = tfidf[doc_vectors_lda]
-
-        query_bow_lda = dictionary_lda.doc2bow(query)
-
-        sims_lda_scene = get_similarity_gensim(tfidf_vectors_lda, len(dictionary_lda), query_bow_lda)
-        print(sims_lda_scene[0:5])
-        print("the reply of system D (lda) is: " + sentences_lda[sims_lda_scene[0][0]])
-
-        # look for the most related sentence using doc2vec
-        sims_doc2vec = get_similarity_gensim(doc2vec, None, query, d2v=True)
-        print(sims_doc2vec[0:5])
-        print("the reply of system E (doc2vec) is: " + sentences[sims_doc2vec[0][0]])
-        # print('Document ({}): «{}»\n'.format(sims_doc2vec[0][0], ' '.join(corpus_doc2vec[sims_doc2vec[0][0]].words)))
-
-        while 1:
-            eval_tmp = input("\nWhich system you think is better? (A, B, C, D, E)\nInput all possible answers, don't add space. \nEx. abc, a, abcde? ")
-            eval_tmp = eval_tmp.strip().lower()
-            if eval_tmp in eval_possible:
-                eval_gen[query] = eval_tmp
-                break
-
-    # # # Random Projections
-    # # model = models.RpModel(tfidf_vectors, num_topics=500)
-    # # # Hierarchical Dirichlet Process
-    # # model = models.HdpModel(doc_vectors, id2word=dictionary)
-    #
-    # # Pick a random document from the test corpus and infer a vector from the doc2vec
-    # # doc_id = random.randint(0, len(test_corpus))
-    # # inferred_vector = doc2vec.infer_vector(test_corpus[doc_id])
-    # # sims = doc2vec.docvecs.most_similar([inferred_vector], topn=len(doc2vec.docvecs))
+# # # Random Projections
+# # model = models.RpModel(tfidf_vectors, num_topics=500)
+# # # Hierarchical Dirichlet Process
+# # model = models.HdpModel(doc_vectors, id2word=dictionary)
+#
+# # Pick a random document from the test corpus and infer a vector from the doc2vec
+# # doc_id = random.randint(0, len(test_corpus))
+# # inferred_vector = doc2vec.infer_vector(test_corpus[doc_id])
+# # sims = doc2vec.docvecs.most_similar([inferred_vector], topn=len(doc2vec.docvecs))
