@@ -17,10 +17,10 @@ Predictions = rw.prediction_types.make_multiclass(
 workflow = rw.workflows.FeatureExtractorClassifier()
 
 score_types = [
-    rw.score_types.NormalizedGini(name='ngini', precision=3),
-    rw.score_types.ROCAUC(name='auc', precision=3),
+    #rw.score_types.NormalizedGini(name='ngini', precision=3),
+    #rw.score_types.ROCAUC(name='auc', precision=3),
     rw.score_types.Accuracy(name='acc', precision=3),
-    rw.score_types.NegativeLogLikelihood(name='nll', precision=3),
+    #rw.score_types.NegativeLogLikelihood(name='nll', precision=3),
 ]
 
 
@@ -34,7 +34,7 @@ def get_cv(X, y):
     cv = StratifiedShuffleSplit(n_splits=8, test_size=0.5, random_state=57)
     return cv.split(X, y)
 
-
+# --------------- X is DataFrame, y is numpy ---------------- #
 def get_train_data(path='.'):
     f = gzip.open('./data/mnist.pkl.gz', 'rb')
 
@@ -47,7 +47,7 @@ def get_train_data(path='.'):
 
     # Shuffle
     train_X = pd.DataFrame(train_set[0])
-    train_y = pd.DataFrame(train_set[1])
+    train_y = pd.DataFrame(train_set[1]).values
 
     return train_X, train_y
 
@@ -65,7 +65,7 @@ def get_test_data(path='.'):
 
     # Shuffle
     test_X = pd.DataFrame(valid_set[0])
-    test_y = pd.DataFrame(valid_set[1])
+    test_y = pd.DataFrame(valid_set[1]).values
 
     return test_X, test_y
 

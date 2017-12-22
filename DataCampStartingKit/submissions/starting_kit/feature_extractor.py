@@ -11,4 +11,4 @@ class FeatureExtractor():
         pass
 
     def transform(self, X_df):
-        return X_df
+        return X_df.values
