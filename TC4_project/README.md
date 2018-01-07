@@ -17,7 +17,11 @@ We have realized HMM one order and two order(HMM1 and HMM2). You can use code by
 
 ### All codes are writen by python3.6
 
-### pip install -r requirements.txt
+### To install necessay libraries
+
+```shell
+pip install -r requirements.txt
+```
 
 ### If you want to read code, it's better to use notebook.
 ```shell
