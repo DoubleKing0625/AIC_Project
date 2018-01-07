@@ -202,7 +202,9 @@ if __name__=="__main__":
 	print("The number of corrected error using viterbi is: " + str(viterbi[1]))
 	print("The number of created error using viterbi is: " + str(viterbi[2]))
 	print("The true positive rate using viterbi is: " + str(viterbi[3]))
-	print("The false negative rate using viterbi is: " + str([viterbi[4]]))
+	print("The false negative rate using viterbi is: " + str(viterbi[4]))
+
+	print("######################################################")
 
 	baseline, fb, viterbi = test_part(train20, test20)
 	print("Here are the result of data-set with 20% error:")
@@ -219,4 +221,4 @@ if __name__=="__main__":
 	print("The number of corrected error using viterbi is: " + str(viterbi[1]))
 	print("The number of created error using viterbi is: " + str(viterbi[2]))
 	print("The true positive rate using viterbi is: " + str(viterbi[3]))
-	print("The false negative rate using viterbi is: " + str([viterbi[4]]))
+	print("The false negative rate using viterbi is: " + str(viterbi[4]))
