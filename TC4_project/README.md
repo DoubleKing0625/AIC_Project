@@ -28,7 +28,7 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 
-### If you just to see the results, just run python file,
+### If you just want to see the results, just run python file,
 ```shell
 python HMM1.py
 python HMM2.py
