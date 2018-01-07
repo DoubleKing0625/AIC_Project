@@ -9,4 +9,23 @@ The first example is misspelled: the observation is thwk while the correct word 
 
 Data for this problem was generated as follows: starting with a text document, in this case, the Unabomber's Manifesto, which was chosen not for political reasons, but for its convenience being available on-line and of about the right length, all numbers and punctuation were converted to white space and all letters converted to lower case. The remaining text is a sequence only over the lower case letters and the space character, represented in the data files by an underscore character. Next, typos were artificially added to the data as follows: with 90% probability, the correct letter is transcribed, but with 10% probability, a randomly chosen neighbor (on an ordinary physical keyboard) of the letter is transcribed instead. Space characters are always transcribed correctly. In a harder variant of the problem, the rate of errors is increased to 20%.
 
-You can download the datasets in this archive file. This archive contains 4 pickles: train10 and test10 constitute the dataset with 10% or spelling errors, while train20 and test20 the one with 20% or errors.
+Data folders contains 4 pickles: train10 and test10 constitute the dataset with 10% or spelling errors, while train20 and test20 the one with 20% or errors.
+
+## How to use
+
+We have realized HMM one order and two order(HMM1 and HMM2). You can use code by notebook and python file(The code in notebook and python file are same).
+
+### All codes are writen by python3.6
+
+### pip install -r requirements.txt
+
+### If you want to read code, it's better to use notebook.
+```shell
+jupyter notebook
+```
+
+### If you just to see the results, just run python file,
+```shell
+python HMM1.py
+python HMM2.py
+```
