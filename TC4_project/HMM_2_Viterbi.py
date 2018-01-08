@@ -156,7 +156,7 @@ def calculate(mu,A):
     return result_mu, result_phy
 
 
-def viterbi(pi,A,B,A_1,B_1,word):
+def Viterbi(pi,A,B,A_1,B_1,word):
     result = []
     if len(word) == 1:
         mu = DataFrame(np.zeros([len(voc_tag),len(word)]),columns=range(len(word)), index=voc_tag)
@@ -196,7 +196,7 @@ def test_part(train,test):
     negative = 0.0
     #test the performance for test set
     for word in test:
-        corrected_word = viterbi(pi,A_,B_,A_1,B_1,word)
+        corrected_word = Viterbi(pi,A_,B_,A_1,B_1,word)
         for i in range(len(word)):
             if word[i][0] == word[i][1]:
                 positive += 1
