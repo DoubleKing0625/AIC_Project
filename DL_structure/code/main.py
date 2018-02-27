@@ -45,10 +45,14 @@ def build_fn(args, embeddings):
     l_emb1 = lasagne.layers.EmbeddingLayer(l_in1, args.vocab_size,
                                            args.embedding_size, W=embeddings)
 
+    print lasagne.layers.get_output_shape(l_emb1)
+
     l_in2 = lasagne.layers.InputLayer((None, None), in_x2)
     l_mask2 = lasagne.layers.InputLayer((None, None), in_mask2)
     l_emb2 = lasagne.layers.EmbeddingLayer(l_in2, args.vocab_size,
                                            args.embedding_size, W=l_emb1.W)
+    print lasagne.layers.get_output_shape(l_emb2)
+
 
     network1 = nn_layers.stack_rnn(l_emb1, l_mask1, args.num_layers, args.hidden_size,
                                    grad_clipping=args.grad_clipping,
@@ -57,6 +61,7 @@ def build_fn(args, embeddings):
                                    bidir=args.bidir,
                                    name='d',
                                    rnn_layer=args.rnn_layer)
+    print lasagne.layers.get_output_shape(network1)
 
     network2 = nn_layers.stack_rnn(l_emb2, l_mask2, args.num_layers, args.hidden_size,
                                    grad_clipping=args.grad_clipping,
@@ -65,6 +70,8 @@ def build_fn(args, embeddings):
                                    bidir=args.bidir,
                                    name='q',
                                    rnn_layer=args.rnn_layer)
+
+    print lasagne.layers.get_output_shape(network2)
 
     args.rnn_output_size = args.hidden_size * 2 if args.bidir else args.hidden_size
 
@@ -85,6 +92,8 @@ def build_fn(args, embeddings):
 
     network = lasagne.layers.DenseLayer(att, args.num_labels,
                                         nonlinearity=lasagne.nonlinearities.softmax)
+
+    print lasagne.layers.get_output_shape(network)
 
     if args.pre_trained is not None:
         dic = utils.load_params(args.pre_trained)
