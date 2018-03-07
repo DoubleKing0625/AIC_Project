@@ -1,0 +1,107 @@
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+INFO:root:round 0	 loss: [0.0, 0.0]	 num: [607, 604]	 reward: [-14290.02, -14280.6]	 value: [-0.32, 0.21]
+INFO:root:round 1	 loss: [0.0, 0.0]	 num: [605, 605]	 reward: [-14259.81, -14237.13]	 value: [-0.09, 0.53]
+INFO:root:round 2	 loss: [0.0, 0.0]	 num: [598, 608]	 reward: [-14183.27, -14195.78]	 value: [-0.11, 0.55]
+INFO:root:round 3	 loss: [0.0, 0.0]	 num: [601, 605]	 reward: [-14204.92, -14243.41]	 value: [0.03, 0.65]
+INFO:root:round 4	 loss: [0.0, 0.0]	 num: [610, 602]	 reward: [-14226.14, -14219.42]	 value: [-0.09, 0.59]
+INFO:root:round 5	 loss: [0.0, 0.0]	 num: [609, 610]	 reward: [-14225.0, -14278.02]	 value: [0.14, 0.74]
+INFO:root:round 6	 loss: [0.0, 0.0]	 num: [608, 595]	 reward: [-14095.89, -14070.3]	 value: [0.0, 0.83]
+INFO:root:round 7	 loss: [0.0, 0.0]	 num: [598, 607]	 reward: [-14161.94, -14191.89]	 value: [0.26, 0.81]
+INFO:root:round 8	 loss: [0.0, 0.0]	 num: [612, 604]	 reward: [-14221.07, -14245.52]	 value: [0.23, 0.81]
+INFO:root:round 9	 loss: [0.0, 0.0]	 num: [607, 598]	 reward: [-14126.79, -14077.24]	 value: [0.3, 0.84]
+INFO:root:round 10	 loss: [0.0, 0.0]	 num: [608, 602]	 reward: [-14180.7, -14177.91]	 value: [0.15, 0.83]
+INFO:root:round 11	 loss: [0.0, 0.0]	 num: [595, 603]	 reward: [-13978.68, -14035.17]	 value: [0.36, 0.84]
+INFO:root:round 12	 loss: [0.0, 0.0]	 num: [605, 605]	 reward: [-14154.36, -14096.68]	 value: [0.21, 0.91]
+INFO:root:round 13	 loss: [0.0, 0.0]	 num: [604, 603]	 reward: [-14015.18, -14037.8]	 value: [0.4, 0.89]
+INFO:root:round 14	 loss: [0.0, 0.0]	 num: [605, 600]	 reward: [-14115.32, -14038.51]	 value: [0.27, 0.95]
+INFO:root:round 15	 loss: [0.0, 0.0]	 num: [602, 607]	 reward: [-13959.36, -14092.52]	 value: [0.4, 0.89]
+INFO:root:round 16	 loss: [0.0, 0.0]	 num: [610, 602]	 reward: [-14003.83, -14046.86]	 value: [0.27, 0.88]
+INFO:root:round 17	 loss: [0.0, 0.0]	 num: [603, 604]	 reward: [-13902.85, -13869.06]	 value: [0.35, 0.89]
+INFO:root:round 18	 loss: [0.0, 0.0]	 num: [607, 609]	 reward: [-14025.77, -14062.63]	 value: [0.29, 0.93]
+INFO:root:round 19	 loss: [0.0, 0.0]	 num: [600, 592]	 reward: [-13882.09, -13756.09]	 value: [0.5, 0.87]
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /home/doubleking0625/MAgent/python/magent/builtin/tf_model/dqn.py:185: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
